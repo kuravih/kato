@@ -1,0 +1,13 @@
+.vscode/
+**/*.o
+
+examples/01_log/test_function
+examples/02_function/test_log
+examples/03_ft2/test_ft2
+examples/03_ft2/*.png
+
+push.sh
+
+*.code-workspace
+
+include/kato/zmq_link.h
