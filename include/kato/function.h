@@ -9,6 +9,12 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <unistd.h>
+#include <cmath>
+#include <cstdarg>
 
 #define KATO_SHORT_SLEEP_US 1000 // 0.01 s
 
@@ -31,10 +37,47 @@ namespace kato::function
         return oss.str();
     }
 
-    const struct timespec time_point_to_timespec(const std::chrono::system_clock::time_point &time = std::chrono::system_clock::now());
-    const std::chrono::system_clock::time_point timespec_to_time_point(const struct timespec &time);
-    float delta_timespec_to_framerate(const struct timespec &t1, const struct timespec &t2);
-    const std::string IndexStampString(const int, const std::string &format = "%04d");
+    inline const struct timespec time_point_to_timespec(const std::chrono::system_clock::time_point &time = std::chrono::system_clock::now())
+    {
+        std::chrono::nanoseconds nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()); // Get the total time in nanoseconds since the epoch
+        std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(nanoseconds);
+        std::chrono::nanoseconds fractional_seconds = nanoseconds % std::chrono::seconds(1);
+
+        timespec ts;
+        ts.tv_sec = seconds.count();
+        ts.tv_nsec = fractional_seconds.count();
+        return ts;
+    }
+
+    const std::chrono::system_clock::time_point timespec_to_time_point(const struct timespec &time)
+    {
+        std::chrono::seconds sec(time.tv_sec);                           // Convert tv_sec (seconds) to std::chrono::seconds
+        std::chrono::nanoseconds nsec(time.tv_nsec);                     // Convert tv_nsec (nanoseconds) to std::chrono::nanoseconds
+        std::chrono::system_clock::duration total_duration = sec + nsec; // Combine seconds and nanoseconds into a duration
+        return std::chrono::system_clock::time_point(total_duration);    // Create and return the time_point
+    }
+
+    inline float delta_timespec_to_framerate(const struct timespec &t1, const struct timespec &t2)
+    {
+        // Calculate the difference in seconds
+        double startTime = t1.tv_sec + t1.tv_nsec / 1e9; // Convert to seconds
+        double endTime = t2.tv_sec + t2.tv_nsec / 1e9;   // Convert to seconds
+        double deltaTime = endTime - startTime;          // Time difference
+
+        // Avoid division by zero
+        if (deltaTime <= 0)
+            return 0.0; // Or handle error
+
+        // Calculate frame rate
+        return 1.0 / deltaTime;
+    }
+
+    const std::string IndexStampString(const int _index, const std::string &format = "%04d")
+    {
+        static char tempIndexStampString[32];
+        sprintf(tempIndexStampString, format.c_str(), _index);
+        return std::string(tempIndexStampString);
+    }
 
     template <typename Duration>
     void InterruptibleSleep(const Duration &sleepTime, const bool skip = true)
@@ -50,7 +93,18 @@ namespace kato::function
         }
     }
 
-    const std::string StringPrintf(const char *format, ...);
+    const std::string StringPrintf(const char *format, ...)
+    {
+        constexpr size_t BUFFER_SIZE = 1024;
+        char buffer[BUFFER_SIZE];
+        va_list args;
+        va_start(args, format);
+        int length = std::vsnprintf(buffer, BUFFER_SIZE, format, args);
+        va_end(args);
+        if (length < 0)
+            return "";
+        return std::string(buffer);
+    }
 
     template <typename T>
     const std::string VecToString(const char *format, const std::vector<T> &_values)

@@ -4,12 +4,29 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include "imgui.h"
 
 namespace kato::function
 {
-    ImVec4 colorTable(const float input, const float min, const float max);
-    void HelpMarker(const std::string);
+    ImVec4 colorTable(const float input, const float min, const float max)
+    {
+
+        float output = (input - min) / (max - min);
+        return {std::clamp(1 - (1 - 2 * output), 0.0f, 1.0f), 1 - abs(1 - 2 * output), std::clamp(2 - 2 * output, 0.0f, 1.0f), 1.0};
+    }
+    void HelpMarker(const std::string message)
+    {
+        ImGui::TextDisabled("(?)");
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+            ImGui::TextUnformatted(message.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
+        }
+    }
 }
 
 // # ==== imgui source file ==============================================================================================

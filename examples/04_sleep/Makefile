@@ -9,11 +9,7 @@ LIB_DIR = ../..
 
 # ==== kato source file ===============================================================================================
 KATO_DIR = $(LIB_DIR)
-
-KATO_SOURCES =
 KATO_HEADERS = $(KATO_DIR)/include/kato/function.h
-KATO_OBJS = $(addprefix .kato_, $(addsuffix .o, $(basename $(notdir $(KATO_SOURCES)))))
-
 KATO_CXXFLAGS = -I$(KATO_DIR)/include
 # ==== kato source file ===============================================================================================
 
@@ -44,9 +40,6 @@ CXXFLAGS_STD = $(CXXFLAGS) -std=c++17
 
 
 # ==== build rules ====================================================================================================
-.kato_%.o: $(KATO_DIR)/src/%.cpp $(KATO_HEADERS)
-	$(CXX) $(CXXFLAGS_STD) -c -o $@ $<
-
 .%.o: %.cpp
 	$(CXX) $(CXXFLAGS_STD) -c -o $@ $<
 
@@ -59,8 +52,5 @@ $(TEST_EXE): $(TEST_OBJS) $(KATO_OBJS)
 clean_test:
 	rm -f $(TEST_EXE) $(TEST_OBJS)
 
-clean_kato:
-	rm -f $(TEST_EXE) $(KATO_OBJS)
-
-clean: clean_test clean_kato
+clean: clean_test
 # ==== build rules ====================================================================================================

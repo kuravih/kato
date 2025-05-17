@@ -1,11 +1,9 @@
 #include "kato/log.h"
 #include "kato/function.h"
 
-int main(int argc, char const *argv[])
+int main()
 {
-
-    (void)argc;
-    (void)argv;
+    kato::log::cout << "TimeStampString : " << kato::function::TimeStampString(1,"%Y%m%d%H%M%S",".") << std::endl;
 
     kato::log::cout << "StringPrintf : " << kato::function::StringPrintf("%f", 314.15926535) << std::endl;
     kato::log::cout << "StringPrintf : " << kato::function::StringPrintf("%+09.4f", 31.415926535) << std::endl;
