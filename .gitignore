@@ -11,3 +11,5 @@ push.sh
 *.code-workspace
 
 include/kato/zmq_link.h
+
+examples/04_sleep/test_sleep

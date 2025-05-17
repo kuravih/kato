@@ -7,6 +7,7 @@
 #include <ctime>
 #include <vector>
 #include <chrono>
+#include <thread>
 
 #define KATO_SHORT_SLEEP_US 1000 // 0.01 s
 
@@ -17,7 +18,20 @@ namespace kato::function
     const std::chrono::system_clock::time_point timespec_to_time_point(const struct timespec &time);
     float delta_timespec_to_framerate(const struct timespec &t1, const struct timespec &t2);
     const std::string IndexStampString(const int, const std::string &format = "%04d");
-    void InterruptibleUSleep(const int, const bool skip = true);
+
+    template <typename Duration>
+    void InterruptibleSleep(const Duration &sleepTime, const bool skip = true)
+    {
+        std::chrono::microseconds timer_us(0);
+        const std::chrono::microseconds short_sleep(KATO_SHORT_SLEEP_US);
+        while (skip)
+        {
+            if (timer_us > std::chrono::duration_cast<std::chrono::microseconds>(sleepTime))
+                break;
+            std::this_thread::sleep_for(short_sleep);
+            timer_us += short_sleep;
+        }
+    }
 
     const std::string StringPrintf(const char *format, ...);
 

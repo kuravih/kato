@@ -78,20 +78,6 @@ const std::string kato::function::IndexStampString(const int _index, const std::
 // --------------------------------------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------------------------------------
-void kato::function::InterruptibleUSleep(const int _sleepTime_us, const bool skip)
-{
-    int timer_us = 0;
-    while (skip)
-    {
-        timer_us += KATO_SHORT_SLEEP_US;
-        if (timer_us > _sleepTime_us)
-            break;
-        usleep(KATO_SHORT_SLEEP_US);
-    }
-}
-// --------------------------------------------------------------------------------------------------------------------
-
-// --------------------------------------------------------------------------------------------------------------------
 const std::string kato::function::StringPrintf(const char *format, ...)
 {
     constexpr size_t BUFFER_SIZE = 1024;
