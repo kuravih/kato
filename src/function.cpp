@@ -9,25 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------------------------------------
-const std::string kato::function::TimeStampString(const int ms, const std::string &format, const char *separator, const std::chrono::system_clock::time_point &time)
-{
-    std::time_t time_t = std::chrono::system_clock::to_time_t(time);
-    std::tm tm_part = *std::localtime(&time_t);
-
-    std::ostringstream oss;
-    oss << std::put_time(&tm_part, format.c_str());
-    if (ms)
-    {
-        std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()); // Get the total time in milliseconds since the epoch
-        std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);
-        std::chrono::milliseconds fractional_seconds = milliseconds - seconds;
-        oss << separator << std::setw(ms) << std::setfill('0') << fractional_seconds.count();
-    }
-    return oss.str();
-}
-// --------------------------------------------------------------------------------------------------------------------
-
-// --------------------------------------------------------------------------------------------------------------------
 const struct timespec kato::function::time_point_to_timespec(const std::chrono::system_clock::time_point &time)
 {
     std::chrono::nanoseconds nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()); // Get the total time in nanoseconds since the epoch

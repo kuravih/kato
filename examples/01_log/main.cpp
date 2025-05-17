@@ -1,10 +1,7 @@
 #include "kato/log.h"
 
-int main(int argc, char const *argv[])
+int main()
 {
-
-    (void)argc;
-    (void)argv;
 
     kato::log::cout << "This is a normal log message." << std::endl;
     kato::log::cout << "Another log entry: " << 42 << " and some text." << std::endl;
