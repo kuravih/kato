@@ -18,7 +18,7 @@ STB_CXXFLAGS = -I$(STB_DIR)/
 # ==== kato source file ===============================================================================================
 KATO_DIR = $(LIB_DIR)
 
-KATO_SOURCES = $(KATO_DIR)/src/ft2_addons.cpp $(KATO_DIR)/src/function.cpp
+KATO_SOURCES = $(KATO_DIR)/src/function.cpp
 KATO_OBJS = $(addprefix .kato_, $(addsuffix .o, $(basename $(notdir $(KATO_SOURCES)))))
 
 KATO_CXXFLAGS = -I$(KATO_DIR)/include `pkg-config --cflags freetype2`
