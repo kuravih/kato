@@ -1,12 +1,12 @@
-#ifndef __KATO_LOG_H__
-#define __KATO_LOG_H__
+#ifndef __KATO_LOG_HPP__
+#define __KATO_LOG_HPP__
 
 #pragma once
 
 #include <iostream>
 #include <sstream>
 
-#include "kato/function.h"
+#include "kato/function.hpp"
 
 #define KATO_BLACK "\u001b[30m"
 #define KATO_RED "\u001b[31m"
@@ -22,6 +22,14 @@ namespace kato
 {
     namespace log
     {
+        inline const char *spinner()
+        {
+            static uint cursor = 0;
+            const char *indicator[] = {u8"⣼", u8"⣹", u8"⢻", u8"⠿", u8"⡟", u8"⣏", u8"⣧", u8"⣶"};
+            constexpr unsigned int count = sizeof(indicator) / sizeof(indicator[0]);
+            return indicator[(cursor++) % count];
+        }
+
         class Logger
         {
         private:
@@ -56,4 +64,4 @@ namespace kato
         inline Logger cerr(std::cerr);
     }
 }
-#endif //__KATO_LOG_H__
+#endif //__KATO_LOG_HPP__

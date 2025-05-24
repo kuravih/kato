@@ -1,5 +1,5 @@
-#ifndef __KATO_FUNCTION_H__
-#define __KATO_FUNCTION_H__
+#ifndef __KATO_FUNCTION_HPP__
+#define __KATO_FUNCTION_HPP__
 
 #pragma once
 
@@ -20,6 +20,7 @@
 
 namespace kato::function
 {
+
     inline const std::string TimeStampString(const int ms = 0, const std::string &format = "%Y%m%d.%H%M%S", const char *separator = ".", const std::chrono::system_clock::time_point &time = std::chrono::system_clock::now())
     {
         std::time_t time_t = std::chrono::system_clock::to_time_t(time);
@@ -49,7 +50,7 @@ namespace kato::function
         return ts;
     }
 
-    const std::chrono::system_clock::time_point timespec_to_time_point(const struct timespec &time)
+    inline const std::chrono::system_clock::time_point timespec_to_time_point(const struct timespec &time)
     {
         std::chrono::seconds sec(time.tv_sec);                           // Convert tv_sec (seconds) to std::chrono::seconds
         std::chrono::nanoseconds nsec(time.tv_nsec);                     // Convert tv_nsec (nanoseconds) to std::chrono::nanoseconds
@@ -72,7 +73,7 @@ namespace kato::function
         return 1.0 / deltaTime;
     }
 
-    const std::string IndexStampString(const int _index, const std::string &format = "%04d")
+    inline const std::string IndexStampString(const int _index, const std::string &format = "%04d")
     {
         static char tempIndexStampString[32];
         sprintf(tempIndexStampString, format.c_str(), _index);
@@ -93,7 +94,7 @@ namespace kato::function
         }
     }
 
-    const std::string StringPrintf(const char *format, ...)
+    inline const std::string StringPrintf(const char *format, ...)
     {
         constexpr size_t BUFFER_SIZE = 1024;
         char buffer[BUFFER_SIZE];
@@ -118,4 +119,4 @@ namespace kato::function
     }
 };
 
-#endif //__KATO_FUNCTION_H__
+#endif //__KATO_FUNCTION_HPP__

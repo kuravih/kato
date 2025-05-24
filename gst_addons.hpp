@@ -1,5 +1,5 @@
-#ifndef __KATO_FUNCTION_GST_ADDONS_H__
-#define __KATO_FUNCTION_GST_ADDONS_H__
+#ifndef __KATO_FUNCTION_GST_ADDONS_HPP__
+#define __KATO_FUNCTION_GST_ADDONS_HPP__
 
 #pragma once
 
@@ -18,4 +18,4 @@ namespace kato::function
 
 // pkg-config --cflags --libs gstreamer-1.0
 
-#endif //__KATO_FUNCTION_GST_ADDONS_H__
+#endif //__KATO_FUNCTION_GST_ADDONS_HPP__

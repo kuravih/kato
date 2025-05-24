@@ -1,5 +1,5 @@
-#ifndef __KATO_FUNCTION_MATH_H__
-#define __KATO_FUNCTION_MATH_H__
+#ifndef __KATO_FUNCTION_OPENBLAS_HPP__
+#define __KATO_FUNCTION_OPENBLAS_HPP__
 
 #pragma once
 #include <vector>
@@ -42,4 +42,4 @@ namespace kato
 
 // pkg-config --cflags --libs openblas
 
-#endif //__KATO_FUNCTION_MATH_H__
+#endif //__KATO_FUNCTION_OPENBLAS_HPP__

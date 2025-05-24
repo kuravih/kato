@@ -1,5 +1,5 @@
-#ifndef __KATO_FUNCTION_IMGUI_ADDONS_H__
-#define __KATO_FUNCTION_IMGUI_ADDONS_H__
+#ifndef __KATO_FUNCTION_IMGUI_ADDONS_HPP__
+#define __KATO_FUNCTION_IMGUI_ADDONS_HPP__
 
 #pragma once
 
@@ -40,4 +40,4 @@ namespace kato::function
 // IMGUI_CXXFLAGS = -I$(IMGUI_DIR)
 // # ==== imgui source file ==============================================================================================
 
-#endif //__KATO_FUNCTION_IMGUI_ADDONS_H__
+#endif //__KATO_FUNCTION_IMGUI_ADDONS_HPP__
