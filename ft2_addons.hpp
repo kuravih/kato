@@ -83,18 +83,19 @@ namespace kato
 
 namespace kato::function
 {
-    inline void overlayInfo(kato::FreeTypeFont &font, uint16_t *buffer, const long width, const long height, const std::string &timestamp, const long exposureTime_ms, const float gain, const float framerate, const float temperature_C, const long br_x, const long br_y, const long tl_x, const long tl_y, const long frame_count, const long event_count)
+    inline void overlayInfo(kato::FreeTypeFont &font, uint16_t *buffer, const long width, const long height, const std::string &timestamp, const long exposureTime_ms, const float gain, const float framerate, const float temperature_C, const long br_x, const long br_y, const long tl_x, const long tl_y, const long cnt0, const long cnt1, const long cnt2)
     {
-        font.renderText(buffer, width, height, "Time     : " + timestamp, 16, 24, 65535);
-        font.renderText(buffer, width, height, "Exp Time : " + std::to_string(exposureTime_ms) + " ms", 16, 38, 65535);
-        font.renderText(buffer, width, height, "Gain     : " + std::to_string(gain), 16, 52, 65535);
-        font.renderText(buffer, width, height, "Rate     : " + std::to_string(framerate) + " fps", 16, 66, 65535);
-        font.renderText(buffer, width, height, "Temp     : " + std::to_string(temperature_C) + " C", 16, 80, 65535);
+        font.renderText(buffer, width, height, "Time      : " + timestamp, 16, 24, 65535);
+        font.renderText(buffer, width, height, "Exp Time  : " + std::to_string(exposureTime_ms) + " ms", 16, 38, 65535);
+        font.renderText(buffer, width, height, "Gain      : " + std::to_string(gain), 16, 52, 65535);
+        font.renderText(buffer, width, height, "FrameRate : " + std::to_string(framerate) + " fps", 16, 66, 65535);
+        font.renderText(buffer, width, height, "Temp      : " + std::to_string(temperature_C) + " C", 16, 80, 65535);
         font.renderText(buffer, width, height, "ROI", 16, 94, 65535);
-        font.renderText(buffer, width, height, "  br     : [" + std::to_string(br_x) + "," + std::to_string(br_y) + "]", 16, 108, 65535);
-        font.renderText(buffer, width, height, "  tl     : [" + std::to_string(tl_x) + "," + std::to_string(tl_y) + "]", 16, 122, 65535);
-        font.renderText(buffer, width, height, "Frame    : " + std::to_string(frame_count), 16, 136, 65535);
-        font.renderText(buffer, width, height, "Event    : " + std::to_string(event_count), 16, 150, 65535);
+        font.renderText(buffer, width, height, "  br      : [" + std::to_string(br_x) + "," + std::to_string(br_y) + "]", 16, 108, 65535);
+        font.renderText(buffer, width, height, "  tl      : [" + std::to_string(tl_x) + "," + std::to_string(tl_y) + "]", 16, 122, 65535);
+        font.renderText(buffer, width, height, "cnt0      : " + std::to_string(cnt0), 16, 136, 65535);
+        font.renderText(buffer, width, height, "cnt1      : " + std::to_string(cnt1), 16, 150, 65535);
+        font.renderText(buffer, width, height, "cnt2      : " + std::to_string(cnt2), 16, 164, 65535);
     }
 };
 

@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <cmath>
 #include <cstdarg>
+#include <iterator>
 
 #define KATO_SHORT_SLEEP_US 1000 // 0.01 s
 
@@ -117,6 +118,17 @@ namespace kato::function
             out += "," + StringPrintf(format, _values[iVal]);
         return out + "]";
     }
+
+    inline std::vector<std::string> split(const std::string &s, char delim)
+    {
+        std::vector<std::string> elems;
+        std::istringstream iss(s);
+        std::string item;
+        while (std::getline(iss, item, delim))
+            elems.push_back(item);
+        return elems;
+    }
+
 };
 
 #endif //__KATO_FUNCTION_HPP__
