@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 #include <cstdio>
 #include <algorithm>
@@ -16,18 +17,18 @@ namespace kato
     class TrueTypeFont
     {
     private:
-        stbtt_fontinfo font;
-        float scale = 1.0f;
-        int baseline = 0;
-        std::vector<unsigned char> fontBuffer; // keep font data alive
+        stbtt_fontinfo m_font;
+        float m_scale = 1.0f;
+        int m_baseline = 0;
+        std::vector<unsigned char> m_fontBuffer; // keep font data alive
 
     public:
-        TrueTypeFont(const char *fontPath)
+        TrueTypeFont(const char *_fontpath, const float _scale = 64.0)
         {
-            FILE *fontFile = fopen(fontPath, "rb");
+            FILE *fontFile = fopen(_fontpath, "rb");
             if (!fontFile)
             {
-                fprintf(stderr, "Could not open font file: %s\n", fontPath);
+                fprintf(stderr, "Could not open font file: %s\n", _fontpath);
                 return;
             }
 
@@ -35,58 +36,90 @@ namespace kato
             size_t size = ftell(fontFile);
             fseek(fontFile, 0, SEEK_SET);
 
-            fontBuffer.resize(size);
-            fread(fontBuffer.data(), 1, size, fontFile);
+            m_fontBuffer.resize(size);
+            fread(m_fontBuffer.data(), 1, size, fontFile);
             fclose(fontFile);
 
-            if (!stbtt_InitFont(&font, fontBuffer.data(), stbtt_GetFontOffsetForIndex(fontBuffer.data(), 0)))
+            if (!stbtt_InitFont(&m_font, m_fontBuffer.data(), stbtt_GetFontOffsetForIndex(m_fontBuffer.data(), 0)))
             {
                 fprintf(stderr, "Failed to init font\n");
                 return;
             }
 
-            scale = stbtt_ScaleForPixelHeight(&font, 64.0f);
+            m_scale = stbtt_ScaleForPixelHeight(&m_font, _scale);
             int ascent, descent, lineGap;
-            stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap);
-            baseline = static_cast<int>(ascent * scale);
+            stbtt_GetFontVMetrics(&m_font, &ascent, &descent, &lineGap);
+            m_baseline = static_cast<int>(ascent * m_scale);
         }
 
-        template <typename T>
-        void renderText(std::vector<T> &_image, size_t _width, size_t _height, size_t _pos_x, size_t _pos_y, const char *_text, const float _color, const float _max_color, const float _min_color = 0)
+        template <typename Type>
+        void renderText(Type *_image, size_t _width, size_t _height, size_t _pos_x, size_t _pos_y, const std::string &_text, float _color, float _max_color, float _min_color = 0.0f)
         {
-            for (const char *p = _text; *p; ++p)
+            static_assert(std::is_arithmetic_v<Type>, "Pixel type must be numeric");
+            if (!_image)
+                return; // null safety
+
+            const size_t start_x = _pos_x; // remember left margin
+
+            // --- Compute approximate line height using font metrics ---
+            int ascent, descent, lineGap;
+            stbtt_GetFontVMetrics(&m_font, &ascent, &descent, &lineGap);
+            const float line_height = (ascent - descent + lineGap) * m_scale;
+
+            for (const char &letter : _text)
             {
+                // --- Handle newline ---
+                if (letter == '\n')
+                {
+                    _pos_x = start_x; // return to start of line
+                    _pos_y += static_cast<size_t>(line_height);
+                    continue;
+                }
+
+                // --- Get glyph metrics ---
                 int ax, lsb;
-                stbtt_GetCodepointHMetrics(&font, *p, &ax, &lsb);
+                stbtt_GetCodepointHMetrics(&m_font, letter, &ax, &lsb);
 
                 int x0, y0, x1, y1;
-                stbtt_GetCodepointBitmapBox(&font, *p, scale, scale, &x0, &y0, &x1, &y1);
+                stbtt_GetCodepointBitmapBox(&m_font, letter, m_scale, m_scale, &x0, &y0, &x1, &y1);
 
-                int w = x1 - x0;
-                int h = y1 - y0;
+                const int w = x1 - x0;
+                const int h = y1 - y0;
+
+                if (w <= 0 || h <= 0)
+                {
+                    _pos_x += static_cast<int>(ax * m_scale);
+                    continue;
+                }
 
                 std::vector<unsigned char> glyph(w * h);
-                stbtt_MakeCodepointBitmap(&font, glyph.data(), w, h, w, scale, scale, *p);
+                stbtt_MakeCodepointBitmap(&m_font, glyph.data(), w, h, w, m_scale, m_scale, letter);
 
+                // --- Render the glyph ---
                 for (int gy = 0; gy < h; ++gy)
                 {
                     for (int gx = 0; gx < w; ++gx)
                     {
-                        size_t ix = _pos_x + gx + x0;
-                        size_t iy = _pos_y + gy + y0 + baseline;
+                        const size_t ix = _pos_x + gx + x0;
+                        const size_t iy = _pos_y + gy + y0 + m_baseline;
+
                         if (ix >= _width || iy >= _height)
                             continue;
 
-                        unsigned char val = glyph[gy * w + gx];
-                        T &pix = _image[iy * _width + ix];
+                        const unsigned char val = glyph[gy * w + gx];
+                        if (val == 0)
+                            continue; // skip empty pixels fast
 
-                        float alpha = val / 255.0f;
+                        const float alpha = val / 255.0f;
 
-                        pix = std::clamp<T>(pix + _color * alpha, _min_color, _max_color);
+                        // Compute pixel index in continuous memory block
+                        Type &pix = _image[iy * _width + ix];
+                        const float blended = static_cast<float>(pix) + _color * alpha;
+                        pix = static_cast<Type>(std::clamp(blended, _min_color, _max_color));
                     }
                 }
 
-                _pos_x += static_cast<int>(ax * scale);
+                _pos_x += static_cast<int>(ax * m_scale);
             }
         }
     };
