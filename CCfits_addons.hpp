@@ -33,8 +33,9 @@ namespace kato::function
         else
             return "USHORT_IMG";
     }
-};
+} // namespace function
 
+// sudo dnf install CCfits-devel
 // pkg-config --cflags --libs CCfits
 
 #endif // __KATO_FUNCTION_CCFITS_ADDONS_HPP__

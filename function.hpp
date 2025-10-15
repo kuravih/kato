@@ -67,7 +67,7 @@ namespace kato::function
         double deltaTime = endTime - startTime;          // Time difference
 
         // Avoid division by zero
-        if (deltaTime <= 0)
+        if (deltaTime == 0)
             return 0.0; // Or handle error
 
         // Calculate frame rate
@@ -129,6 +129,6 @@ namespace kato::function
         return elems;
     }
 
-};
+} // namespace function
 
 #endif //__KATO_FUNCTION_HPP__
