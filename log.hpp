@@ -18,50 +18,48 @@
 #define KATO_WHITE "\u001b[37m"
 #define KATO_RESET "\u001b[0m"
 
-namespace kato
+namespace kato::log
 {
-    namespace log
+    inline const char *spinner()
     {
-        inline const char *spinner()
+        static uint cursor = 0;
+        const char *indicator[] = {"⣼", "⣹", "⢻", "⠿", "⡟", "⣏", "⣧", "⣶"};
+        constexpr unsigned int count = sizeof(indicator) / sizeof(indicator[0]);
+        return indicator[(cursor++) % count];
+    }
+
+    class Logger
+    {
+    private:
+        std::ostream &output;
+        bool newLine;
+
+    public:
+        Logger(std::ostream &out) : output(out), newLine(true) {}
+
+        template <typename T>
+        Logger &operator<<(const T &value)
         {
-            static uint cursor = 0;
-            const char *indicator[] = {u8"⣼", u8"⣹", u8"⢻", u8"⠿", u8"⡟", u8"⣏", u8"⣧", u8"⣶"};
-            constexpr unsigned int count = sizeof(indicator) / sizeof(indicator[0]);
-            return indicator[(cursor++) % count];
+            if (newLine)
+            {
+                output << "[" << kato::function::TimeStampString() << "] ";
+                newLine = false;
+            }
+            output << value;
+            return *this;
         }
 
-        class Logger
+        // Handle manipulators like std::endl
+        Logger &operator<<(std::ostream &(*manip)(std::ostream &))
         {
-        private:
-            std::ostream &output;
-            bool newLine;
+            manip(output);  // Apply the manipulator (e.g., std::endl)
+            newLine = true; // Mark the next line for prefixing
+            return *this;
+        }
+    };
 
-        public:
-            Logger(std::ostream &out) : output(out), newLine(true) {}
+    inline Logger cout(std::cout);
+    inline Logger cerr(std::cerr);
+} // namespace log
 
-            template <typename T>
-            Logger &operator<<(const T &value)
-            {
-                if (newLine)
-                {
-                    output << "[" << kato::function::TimeStampString() << "] ";
-                    newLine = false;
-                }
-                output << value;
-                return *this;
-            }
-
-            // Handle manipulators like std::endl
-            Logger &operator<<(std::ostream &(*manip)(std::ostream &))
-            {
-                manip(output);  // Apply the manipulator (e.g., std::endl)
-                newLine = true; // Mark the next line for prefixing
-                return *this;
-            }
-        };
-
-        inline Logger cout(std::cout);
-        inline Logger cerr(std::cerr);
-    }
-}
 #endif //__KATO_LOG_HPP__
