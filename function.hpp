@@ -59,6 +59,12 @@ namespace kato::function
         return std::chrono::system_clock::time_point(total_duration);    // Create and return the time_point
     }
 
+    inline float delta_time_point_to_framerate(const std::chrono::system_clock::time_point &t1, const std::chrono::system_clock::time_point &t2)
+    {
+        std::chrono::duration<double> delta_t_seconds = t2 - t1;
+        return 1.0 / delta_t_seconds.count();
+    }
+
     inline float delta_timespec_to_framerate(const struct timespec &t1, const struct timespec &t2)
     {
         // Calculate the difference in seconds
